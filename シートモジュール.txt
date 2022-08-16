@@ -1,0 +1,80 @@
+Option Explicit
+
+Dim g As Integer
+Dim r As Integer
+Dim n As Integer
+Dim i As Integer
+Dim StartTimer As Double
+Dim StopFlg As Boolean
+
+
+Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
+  
+  '右クリックのメニュー表示を無効'
+  Cancel = True
+  
+  'Startセルを右クリックした場合'
+  If Target.Value = Cells(10, 2) Then
+    g = Int((8 - 2 + 1) * Rnd + 2) '行数をランダムに選択（2～8）'
+    r = Int((6 - 2 + 1) * Rnd + 2) '列数をランダムに選択（B～F）'
+    Cells(g, r) = 1
+
+    'タイマー'
+    StartTimer = Timer
+    StopFlg = False
+    Do While StopFlg = False 'タイマースタート'
+      Cells(10, 5) = Int((Timer - StartTimer) * 100) / 100
+      'Cells(10, 5) = Application.WorksheetFunction.RoundDown(Int((Timer - StartTimer) * 100) / 100, 2) '小数点2桁以下切り捨て'
+      DoEvents
+    Loop
+  End If
+
+  '盤面を右クリックした場合'
+  If Target.Value = "" Then
+    MsgBox ("はずれ")
+    
+      
+  '1～4の数値を選択した場合'
+  ElseIf Target.Value = "1" Or _
+         Target.Value = "2" Or _
+         Target.Value = "3" Or _
+         Target.Value = "4" Then
+    n = Target.Value 'n = 1～4'
+    g = Int((8 - 2 + 1) * Rnd + 2) '行数をランダムに選択（2～8）'
+    r = Int((6 - 2 + 1) * Rnd + 2) '列数をランダムに選択（B～F）'
+    If Cells(g, r) = "" Then
+      Cells(g, r) = n + 1 'n = 2～5'
+    Else '次の数字が表示されるセルが前の数字と同じだった場合'
+      Cells(g, r + 1) = n + 1 'n = 2～5' '右隣のセルに表示'
+    End If
+    Target.Value = "" '数値があったセルを削除'
+  
+  '5の数値を選択した場合（ゲームクリア）'
+  ElseIf Target.Value = "5" Then
+    StopFlg = True 'タイマーストップ（Loop終了）'
+    MsgBox ("おめでとうゲーム終了です")
+    Range("B2:F8") = "" '盤面をリセット'
+
+    'ランキング'
+    Range("D13:D22") = "" '前回の矢印を削除'
+    For i = 13 To 23
+      If Cells(i, "C") = "" Then
+        Cells(i, "C") = Cells(10, 5).Value
+        Cells(i, "D") = "←" '今回の記録であることを示す'
+        Exit For
+      End If
+    Next i
+
+    '並び替え'
+    Call Range("C13:D23").Sort( _
+      Key1:=Range("C13"), Order1:=xlAscending) '昇順'
+    Cells(23, 3) = "" '11位を削除'
+  End If
+  
+ 'Resetセルを右クリックした場合'
+  If Target.Value = Cells(12, 4) Then  'タイマーとランキングをリセット'
+    Cells(10, 5).Value = "0.00秒"
+    Range("C13:D22") = ""
+  End If
+
+End Sub
