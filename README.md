@@ -10,6 +10,8 @@
 
 # ファイル
 - カウントアップゲーム.xlsm
+- Sheet1.cls
 - シートモジュール.txt
+- Module1.bas
 - 標準モジュール.txt
 - README.md
