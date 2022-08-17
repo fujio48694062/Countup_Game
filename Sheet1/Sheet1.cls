@@ -80,10 +80,9 @@ Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
   End If
   
  'Resetセルを右クリックした場合'
-  If Target.Value = Cells(12, 4) Then  'タイマーとランキングをリセット'
-    Cells(10, 5).Value = "0.00秒"
-    Range("C13:D22") = ""
+  If Target.Value = Cells(12, 4) Then
+    Cells(10, 5).Value = "0.00秒" 'タイマーをリセット'
+    Range("C13:D22") = "" 'ランキングをリセット'
   End If
 
 End Sub
-
